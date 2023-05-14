@@ -3,22 +3,19 @@ using SFML.System;
 
 public class Paddle
 {
-    private bool ownPaddle;
 
-    private int windowWidth;
-    private int windowHeight;
+    private Vector2u windowSize;
 
-    public RectangleShape paddle;
+    private RectangleShape shape;
     private float paddleSpeed = 0.1f;
 
-    public Paddle(bool ownPaddle, int windowWidth, int windowHeight)
+    public Paddle(Vector2u windowSize)
     {
-        this.ownPaddle = ownPaddle;
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
+        this.windowSize = windowSize;
 
-        paddle = new RectangleShape(new Vector2f(100, 20));
-        paddle.FillColor = Color.White;
+        shape = new RectangleShape(new Vector2f(100, 20));
+        shape.FillColor = Color.White;
+        shape.Origin = new Vector2f(shape.Size.X / 2, shape.Size.Y / 2);
 
     }
     public void MovePaddle(Direction direction)
@@ -26,30 +23,24 @@ public class Paddle
         switch (direction)
         {
             case Direction.Left:
-                if (paddle.Position.X > 0)
+                if (shape.Position.X - shape.Size.X / 2 > 0)
                 {
-                    paddle.Position -= new Vector2f(paddleSpeed, 0);
+                    shape.Position -= new Vector2f(paddleSpeed, 0);
                 }
                 break;
             case Direction.Right:
-                if (paddle.Position.X < windowWidth - paddle.Size.X)
+                if (shape.Position.X + shape.Size.X / 2 < windowSize.X)
                 {
-                    paddle.Position += new Vector2f(paddleSpeed, 0);
+                    shape.Position += new Vector2f(paddleSpeed, 0);
                 }
                 break;
         }
     }
-    public void SetStartValues()
-    {
-        if (ownPaddle)
-        {
-            paddle.Position = new Vector2f(windowWidth / 2 - paddle.Size.X / 2, windowHeight - paddle.Size.Y - 10);
-        }
-        else
-        {
-            paddle.Position = new Vector2f(windowWidth / 2 - paddle.Size.X / 2, 10);
-        }
-    }
+    public void SetPosition(Vector2f newPosition) => shape.Position = newPosition;
+    public Vector2f GetPosition() => shape.Position;
 
+    public bool IfSmthHit(Vector2f objPosition) => shape.GetGlobalBounds().Contains(objPosition.X, objPosition.Y);
+    public Vector2f GetSize() => shape.Size;
+    public RectangleShape GetDrawableObject() => shape;
 
 }

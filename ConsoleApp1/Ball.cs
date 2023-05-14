@@ -5,27 +5,21 @@ public class Ball
 {
     private Random rand = new Random();
 
-    private int windowWidth;
-    private int windowHeight;
+    private CircleShape shape;
+    private float ballSpeed;
+    private Vector2f ballDirection;
 
-    public CircleShape ball;
-    private float ballSpeed = 0.06f;
-    private Vector2f ballDirection = new Vector2f(-1.0f, 1.0f);
+    private Vector2u windowSize;
 
-    private Paddle ownPaddle;
-    private Paddle enemyPaddle;
-
-
-    public Ball(int windowWidth, int windowHeight, Paddle ownPaddle, Paddle enemyPaddle) 
+    public Ball(Vector2u windowSize) 
     {
-        this.windowWidth = windowWidth;
-        this.windowHeight = windowHeight;
-        this.ownPaddle = ownPaddle;
-        this.enemyPaddle = enemyPaddle;
+        this.windowSize = windowSize;
 
-        ball = new CircleShape(10);
-        ball.FillColor = Color.Green;
+        shape = new CircleShape(10);
+        shape.FillColor = Color.Green;
+        shape.Origin = new Vector2f(shape.Radius, shape.Radius);
         ballSpeed = 0.1f;
+
         SetRandomBallDirection();
 
     }
@@ -47,28 +41,8 @@ public class Ball
     }
     public void Move()
     {
-        ball.Position += ballDirection * ballSpeed;
-        TryBounce();
-    }
-    private void TryBounce()
-    {
-        if (ball.Position.X < 0 || ball.Position.X + 2 * ball.Radius > windowWidth)
-        {
-            ballSpeed += 0.0007f;
-            ballDirection.X = -ballDirection.X;
-        }
-
-        if (ownPaddle.paddle.GetGlobalBounds().Contains(ball.Position.X + ball.Radius, ball.Position.Y + ball.Radius))
-        {
-            ballSpeed += 0.0007f;
-            ballDirection.Y = -ballDirection.Y;
-        }
-        if (enemyPaddle.paddle.GetGlobalBounds().Contains(ball.Position.X + ball.Radius, ball.Position.Y + ball.Radius))
-        {
-            ballSpeed += 0.0007f;
-            ballDirection.Y = -ballDirection.Y;
-        }
-
+        shape.Position += ballDirection * ballSpeed;
+        TryBounceFromWindowBorders();
     }
 
     private bool Probability(int procent)
@@ -83,10 +57,32 @@ public class Ball
         }
         return rand.Next(1, 101) <= procent;
     }
-    public void SetStartValues()
+    public CircleShape GetDrawableObject() => shape;
+    public Vector2f GetBallPosition() => shape.Position;
+    public float GetBallRadius() => shape.Radius;
+    public void SetBallPosition(Vector2f newPosition) => shape.Position = newPosition;
+    public void OnBounce(Direction bounceDirection)
     {
-        ball.Position = new Vector2f(windowWidth / 2 - ball.Radius, windowHeight / 2 - ball.Radius);
-    }
+        ballSpeed += 0.0007f;
+        switch (bounceDirection)
+        {
+            case Direction.Vertical:
+                ballDirection.Y = -ballDirection.Y;
+                break;
+            case Direction.Horizontal:
+                ballDirection.X = -ballDirection.X;
+                break;
+            default:
+                throw new NotImplementedException();
+        }
 
+    }
+    private void TryBounceFromWindowBorders()
+    {
+        if (shape.Position.X - shape.Radius < 0 || shape.Position.X + shape.Radius > windowSize.X)
+        {
+            OnBounce(Direction.Horizontal);
+        }
+    }
 
 }
