@@ -26,9 +26,7 @@ public class Game
 
     public void Start()
     {
-        window = new RenderWindow(new VideoMode(windowWidth, windowHeight), "Aero Hockey");
-        window.Closed += WindowClosed;
-
+        SetWingow();
         SetPaddles();
         SetBall();
 
@@ -49,15 +47,24 @@ public class Game
 
             CheckIfSomeoneWon();
 
-            window.Clear(Color.Black);
-
-            window.Draw(ownPaddle.paddle);
-            window.Draw(enemyPaddle.paddle);
-            window.Draw(ball.ball);
-
-            window.Display();
-
+            DrowScene();
         }
+    }
+    private void DrowScene()
+    {
+        window.Clear(Color.Black);
+
+        window.Draw(ownPaddle.paddle);
+        window.Draw(enemyPaddle.paddle);
+        window.Draw(ball.ball);
+
+        window.Display();
+    }
+    private void SetWingow()
+    {
+        window = new RenderWindow(new VideoMode(windowWidth, windowHeight), "Aero Hockey");
+        window.Closed += WindowClosed;
+
     }
     private void SetPaddles()
     {
