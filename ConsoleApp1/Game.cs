@@ -101,7 +101,7 @@ public class Game
             isPlaying = false;
             return;
         }
-        else if (ball.ball.Position.Y > windowHeight - 2 * ball.ball.Radius)
+        else if (ball.ball.Position.Y + 2 * ball.ball.Radius > windowHeight)
         {
             Console.WriteLine("Opponent scores!");
             isPlaying = false;

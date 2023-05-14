@@ -52,7 +52,7 @@ public class Ball
     }
     private void TryBounce()
     {
-        if (ball.Position.X < 0 || ball.Position.X > windowWidth - 2 * ball.Radius)
+        if (ball.Position.X < 0 || ball.Position.X + 2 * ball.Radius > windowWidth)
         {
             ballSpeed += 0.0007f;
             ballDirection.X = -ballDirection.X;
@@ -85,7 +85,7 @@ public class Ball
     }
     public void SetStartValues()
     {
-        ball.Position = new Vector2f(windowWidth / 2.0f - ball.Radius, windowHeight / 2.0f - ball.Radius);
+        ball.Position = new Vector2f(windowWidth / 2 - ball.Radius, windowHeight / 2 - ball.Radius);
     }
 
 
