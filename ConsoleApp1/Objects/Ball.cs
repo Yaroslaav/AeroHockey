@@ -14,18 +14,23 @@ public class Ball : IDrawable
     public Ball(Vector2u windowSize) 
     {
         this._windowSize = windowSize;
-
-        _shape = new CircleShape(10);
-        _shape.FillColor = Color.Green;
-        _shape.Origin = new Vector2f(_shape.Radius, _shape.Radius);
+        
+        SetShapeSettings();
         _ballSpeed = 0.05f;
 
         SetRandomBallDirection();
 
     }
 
+    private void SetShapeSettings()
+    {
+        _shape = new CircleShape(10);
+        _shape.FillColor = Color.Green;
+        _shape.Origin = new Vector2f(_shape.Radius, _shape.Radius);
+    }
+
     public Shape GetDrawableObject() => _shape;
-    public void SetRandomBallDirection()
+    private void SetRandomBallDirection()
     {
         int xDirection = 1;
         int yDirection = 1;
