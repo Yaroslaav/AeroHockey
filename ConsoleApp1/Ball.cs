@@ -18,7 +18,7 @@ public class Ball : IDrawable
         _shape = new CircleShape(10);
         _shape.FillColor = Color.Green;
         _shape.Origin = new Vector2f(_shape.Radius, _shape.Radius);
-        _ballSpeed = 0.07f;
+        _ballSpeed = 0.05f;
 
         SetRandomBallDirection();
 

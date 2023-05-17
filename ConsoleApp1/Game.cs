@@ -19,7 +19,7 @@ public class Game
 
     private Ball ball;
 
-    readonly List<IDrawable> _drawableObjects = new List<IDrawable>();
+    readonly List<IDrawable> _drawableObjects = new ();
 
     public void Start()
     {
@@ -33,7 +33,7 @@ public class Game
         _isPlaying = true;
         GameLoop();
     }
-    public void GameLoop()
+    private void GameLoop()
     {
         while(_isPlaying)
         {
@@ -43,9 +43,7 @@ public class Game
             TryMoveOpponentPaddle();
 
             ball.Move();
-
             TryBounceFromPaddle();
-
             CheckIfSomeoneWon();
 
             Window.DrawScene(_drawableObjects.ToArray());
@@ -57,6 +55,7 @@ public class Game
     {
         ownPaddle = new Paddle(Window.renderWindow.Size);
         _drawableObjects.Add(ownPaddle);
+        
         enemyPaddle = new Paddle(Window.renderWindow.Size);
         _drawableObjects.Add(enemyPaddle);
     }
@@ -66,12 +65,9 @@ public class Game
         ball = new Ball(Window.renderWindow.Size);
         _drawableObjects.Add(ball);
     } 
-        
 
-    private void WindowClosed(object? sender, EventArgs e)
-    {
-        _isPlaying = false;
-    }
+    private void WindowClosed(object? sender, EventArgs e) => _isPlaying = false;
+    
     private void MoveInputProcessing()
     {
         if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
@@ -101,19 +97,17 @@ public class Game
     private void CheckIfSomeoneWon()
     {
         Vector2f ballPosition = ball.GetBallPosition();
-        float ballRadius = ball.GetBallRadius();
 
         if (ballPosition.Y < 0)
         {
             Console.WriteLine("Player scores!");
             _isPlaying = false;
         }
-        else if (ballPosition.Y + 2 * ballRadius > Window.WindowHeight)
+        else if (ballPosition.Y + 2 * ball.GetBallRadius() > Window.WindowHeight)
         {
             Console.WriteLine("Opponent scores!");
             _isPlaying = false;
         }
-
     }
     private void SetObjectsStartPosition()
     {
@@ -133,7 +127,6 @@ public class Game
         {
             ball.OnBounce(Direction.Vertical);
         }
-
     }
     public void SetStartBallPosition()
     {
