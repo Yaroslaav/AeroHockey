@@ -19,7 +19,7 @@ public class Game
 
     private Ball ball;
 
-    readonly List<IDrawable> _drawableObjects = new ();
+    private List<IDrawable> _drawableObjects = new ();
 
     public void Start()
     {
@@ -49,8 +49,16 @@ public class Game
             Window.DrawScene(_drawableObjects.ToArray());
             
         }
+
+        Stop();
     }
 
+    private void Stop()
+    {
+        _drawableObjects = new ();
+        Window.Close();
+        Start();
+    }
     private void SetPaddles()
     {
         ownPaddle = new Paddle(Window.renderWindow.Size);
@@ -59,13 +67,11 @@ public class Game
         enemyPaddle = new Paddle(Window.renderWindow.Size);
         _drawableObjects.Add(enemyPaddle);
     }
-
     private void SetBall()
     {
         ball = new Ball(Window.renderWindow.Size);
         _drawableObjects.Add(ball);
     } 
-
     private void WindowClosed(object? sender, EventArgs e) => _isPlaying = false;
     
     private void MoveInputProcessing()
@@ -93,7 +99,6 @@ public class Game
             enemyPaddle.MovePaddle(Direction.Right);
         }
     }
-
     private void CheckIfSomeoneWon()
     {
         Vector2f ballPosition = ball.GetBallPosition();
@@ -141,6 +146,4 @@ public class Game
         paddleSize = enemyPaddle.GetSize();
         enemyPaddle.SetPosition(new Vector2f(Window.WindowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
     }
-
-
 }
