@@ -12,7 +12,7 @@ public static class Window
     
     public static void DrawScene(IDrawable[] items)
     {
-        renderWindow.Clear(Color.Black);
+        Clear();
 
         foreach (IDrawable item in items)
         {
@@ -23,8 +23,14 @@ public static class Window
     public static void SetWindow()
     {
         renderWindow = new RenderWindow(new VideoMode(WindowWidth, WindowHeight), "Aero Hockey");
+        Clear();
     }
 
     public static void DispatchEvents() => renderWindow.DispatchEvents();
-    
+    public static void Clear() => renderWindow.Clear(Color.Black);
+    public static void Close()
+    {
+        Clear();
+        renderWindow.Close();
+    }
 }
