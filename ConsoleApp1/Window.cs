@@ -5,8 +5,8 @@ namespace AeroHockey;
 
 public static class Window
 {
-    public const int windowWidth = 800;
-    public const int windowHeight = 600;
+    public const int WindowWidth = 800;
+    public const int WindowHeight = 600;
 
     public static RenderWindow renderWindow;
     
@@ -16,13 +16,13 @@ public static class Window
 
         foreach (IDrawable item in items)
         {
-            renderWindow.Draw(item.GetDrawaleObject());
+            renderWindow.Draw(item.GetDrawableObject());
         }
         renderWindow.Display();
     }
     public static void SetWindow()
     {
-        renderWindow = new RenderWindow(new VideoMode(windowWidth, windowHeight), "Aero Hockey");
+        renderWindow = new RenderWindow(new VideoMode(WindowWidth, WindowHeight), "Aero Hockey");
     }
 
     public static void DispatchEvents() => renderWindow.DispatchEvents();

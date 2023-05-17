@@ -1,5 +1,4 @@
-﻿using SFML.Graphics;
-using SFML.System;
+﻿using SFML.System;
 using SFML.Window;
 using Window = AeroHockey.Window;
 
@@ -13,14 +12,14 @@ public enum Direction
 
 public class Game
 {
-    private bool isPlaying;
+    private bool _isPlaying;
     
-    Paddle ownPaddle;
-    Paddle enemyPaddle;
+    private Paddle ownPaddle;
+    private Paddle enemyPaddle;
 
-    Ball ball;
+    private Ball ball;
 
-    private List<IDrawable> _drawableObjects = new List<IDrawable>();
+    readonly List<IDrawable> _drawableObjects = new List<IDrawable>();
 
     public void Start()
     {
@@ -31,12 +30,12 @@ public class Game
         SetBall();
         SetObjectsStartPosition();
         
-        isPlaying = true;
+        _isPlaying = true;
         GameLoop();
     }
     public void GameLoop()
     {
-        while(isPlaying)
+        while(_isPlaying)
         {
             Window.DispatchEvents();
 
@@ -69,9 +68,9 @@ public class Game
     } 
         
 
-    private void WindowClosed(object sender, EventArgs e)
+    private void WindowClosed(object? sender, EventArgs e)
     {
-        isPlaying = false;
+        _isPlaying = false;
     }
     private void MoveInputProcessing()
     {
@@ -107,12 +106,12 @@ public class Game
         if (ballPosition.Y < 0)
         {
             Console.WriteLine("Player scores!");
-            isPlaying = false;
+            _isPlaying = false;
         }
-        else if (ballPosition.Y + 2 * ballRadius > Window.windowHeight)
+        else if (ballPosition.Y + 2 * ballRadius > Window.WindowHeight)
         {
             Console.WriteLine("Opponent scores!");
-            isPlaying = false;
+            _isPlaying = false;
         }
 
     }
@@ -139,15 +138,15 @@ public class Game
     public void SetStartBallPosition()
     {
         float ballRadius = ball.GetBallRadius();
-        ball.SetBallPosition(new Vector2f(Window.windowWidth / 2 - ballRadius, Window.windowHeight / 2 - ballRadius));
+        ball.SetBallPosition(new Vector2f(Window.WindowWidth / 2 - ballRadius, Window.WindowHeight / 2 - ballRadius));
     }
     public void SetStartPaddlesPosition()
     {
         Vector2f paddleSize = ownPaddle.GetSize();
-        ownPaddle.SetPosition(new Vector2f(Window.windowWidth / 2 - paddleSize.X / 2, Window.windowHeight - paddleSize.Y));
+        ownPaddle.SetPosition(new Vector2f(Window.WindowWidth / 2 - paddleSize.X / 2, Window.WindowHeight - paddleSize.Y));
 
         paddleSize = enemyPaddle.GetSize();
-        enemyPaddle.SetPosition(new Vector2f(Window.windowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
+        enemyPaddle.SetPosition(new Vector2f(Window.WindowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
     }
 
 
