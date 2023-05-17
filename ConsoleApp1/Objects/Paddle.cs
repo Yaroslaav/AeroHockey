@@ -13,10 +13,14 @@ public class Paddle : IDrawable
     {
         this._windowSize = windowSize;
 
+        SetShapeSettings();
+    }
+
+    private void SetShapeSettings()
+    {
         _shape = new RectangleShape(new Vector2f(100, 20));
         _shape.FillColor = Color.White;
         _shape.Origin = new Vector2f(_shape.Size.X / 2, _shape.Size.Y / 2);
-
     }
 
     public Shape GetDrawableObject() => _shape;
