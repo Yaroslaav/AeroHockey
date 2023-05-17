@@ -1,7 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 
-public class Ball
+public class Ball : IDrawable
 {
     private Random rand = new Random();
 
@@ -10,6 +10,7 @@ public class Ball
     private Vector2f ballDirection;
 
     private Vector2u windowSize;
+    private int bouncesCount = 0;
 
     public Ball(Vector2u windowSize) 
     {
@@ -18,15 +19,17 @@ public class Ball
         shape = new CircleShape(10);
         shape.FillColor = Color.Green;
         shape.Origin = new Vector2f(shape.Radius, shape.Radius);
-        ballSpeed = 0.1f;
+        ballSpeed = 0.07f;
 
         SetRandomBallDirection();
 
     }
+
+    public Shape GetDrawaleObject() => shape;
     public void SetRandomBallDirection()
     {
-        double xDirection = rand.NextDouble();
-        double yDirection = rand.NextDouble();
+        int xDirection = 1;
+        int yDirection = 1;
 
         if (Probability(50))
         {
@@ -63,14 +66,18 @@ public class Ball
     public void SetBallPosition(Vector2f newPosition) => shape.Position = newPosition;
     public void OnBounce(Direction bounceDirection)
     {
-        ballSpeed += 0.0007f;
+        ballSpeed += 0.001f;
         switch (bounceDirection)
         {
             case Direction.Vertical:
                 ballDirection.Y = -ballDirection.Y;
+                bouncesCount++;
+                Console.WriteLine(bouncesCount);
                 break;
             case Direction.Horizontal:
                 ballDirection.X = -ballDirection.X;
+                bouncesCount++;
+                Console.WriteLine(bouncesCount);
                 break;
             default:
                 throw new NotImplementedException();
@@ -79,7 +86,7 @@ public class Ball
     }
     private void TryBounceFromWindowBorders()
     {
-        if (shape.Position.X - shape.Radius < 0 || shape.Position.X + shape.Radius > windowSize.X)
+        if (shape.Position.X < shape.Radius || shape.Position.X + shape.Radius > windowSize.X)
         {
             OnBounce(Direction.Horizontal);
         }

@@ -1,7 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 
-public class Paddle
+public class Paddle : IDrawable 
 {
 
     private Vector2u windowSize;
@@ -18,6 +18,8 @@ public class Paddle
         shape.Origin = new Vector2f(shape.Size.X / 2, shape.Size.Y / 2);
 
     }
+
+    public Shape GetDrawaleObject() => shape;
     public void MovePaddle(Direction direction)
     {
         switch (direction)
@@ -42,5 +44,4 @@ public class Paddle
     public bool IfSmthHit(Vector2f objPosition) => shape.GetGlobalBounds().Contains(objPosition.X, objPosition.Y);
     public Vector2f GetSize() => shape.Size;
     public RectangleShape GetDrawableObject() => shape;
-
 }

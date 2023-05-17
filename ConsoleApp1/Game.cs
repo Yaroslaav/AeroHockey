@@ -1,6 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Window = AeroHockey.Window;
 
 public enum Direction 
 {
@@ -12,27 +13,24 @@ public enum Direction
 
 public class Game
 {
-    public bool isPlaying;
-
-    public const int windowWidth = 800;
-    public const int windowHeight = 600;
-
-    public RenderWindow window;
-
+    private bool isPlaying;
+    
     Paddle ownPaddle;
     Paddle enemyPaddle;
 
     Ball ball;
 
+    private List<IDrawable> _drawableObjects = new List<IDrawable>();
 
     public void Start()
     {
-        SetWingow();
-        SetPaddles();
+        Window.SetWindow();
+        Window.renderWindow.Closed += WindowClosed;
+        
+        SetPaddles(); 
         SetBall();
-
         SetObjectsStartPosition();
-
+        
         isPlaying = true;
         GameLoop();
     }
@@ -40,7 +38,7 @@ public class Game
     {
         while(isPlaying)
         {
-            window.DispatchEvents();
+            Window.DispatchEvents();
 
             MoveInputProcessing();
             TryMoveOpponentPaddle();
@@ -51,31 +49,25 @@ public class Game
 
             CheckIfSomeoneWon();
 
-            DrowScene();
+            Window.DrawScene(_drawableObjects.ToArray());
+            
         }
     }
-    private void DrowScene()
-    {
-        window.Clear(Color.Black);
 
-        window.Draw(ownPaddle.GetDrawableObject());
-        window.Draw(enemyPaddle.GetDrawableObject());
-        window.Draw(ball.GetDrawableObject());
-
-        window.Display();
-    }
-    private void SetWingow()
-    {
-        window = new RenderWindow(new VideoMode(windowWidth, windowHeight), "Aero Hockey");
-        window.Closed += WindowClosed;
-
-    }
     private void SetPaddles()
     {
-        ownPaddle = new Paddle(window.Size);
-        enemyPaddle = new Paddle(window.Size);
+        ownPaddle = new Paddle(Window.renderWindow.Size);
+        _drawableObjects.Add(ownPaddle);
+        enemyPaddle = new Paddle(Window.renderWindow.Size);
+        _drawableObjects.Add(enemyPaddle);
     }
-    private void SetBall() => ball = new Ball(window.Size);
+
+    private void SetBall()
+    {
+        ball = new Ball(Window.renderWindow.Size);
+        _drawableObjects.Add(ball);
+    } 
+        
 
     private void WindowClosed(object sender, EventArgs e)
     {
@@ -117,7 +109,7 @@ public class Game
             Console.WriteLine("Player scores!");
             isPlaying = false;
         }
-        else if (ballPosition.Y + 2 * ballRadius > windowHeight)
+        else if (ballPosition.Y + 2 * ballRadius > Window.windowHeight)
         {
             Console.WriteLine("Opponent scores!");
             isPlaying = false;
@@ -147,15 +139,15 @@ public class Game
     public void SetStartBallPosition()
     {
         float ballRadius = ball.GetBallRadius();
-        ball.SetBallPosition(new Vector2f(windowWidth / 2 - ballRadius, windowHeight / 2 - ballRadius));
+        ball.SetBallPosition(new Vector2f(Window.windowWidth / 2 - ballRadius, Window.windowHeight / 2 - ballRadius));
     }
     public void SetStartPaddlesPosition()
     {
         Vector2f paddleSize = ownPaddle.GetSize();
-        ownPaddle.SetPosition(new Vector2f(windowWidth / 2 - paddleSize.X / 2, windowHeight - paddleSize.Y));
+        ownPaddle.SetPosition(new Vector2f(Window.windowWidth / 2 - paddleSize.X / 2, Window.windowHeight - paddleSize.Y));
 
         paddleSize = enemyPaddle.GetSize();
-        enemyPaddle.SetPosition(new Vector2f(windowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
+        enemyPaddle.SetPosition(new Vector2f(Window.windowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
     }
 
 
