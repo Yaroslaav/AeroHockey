@@ -3,6 +3,7 @@ using SFML.Window;
 
 public enum Direction 
 {
+    None,
     Left,
     Right,
     Vertical, 
@@ -18,7 +19,7 @@ public class Game
 
     private Ball ball;
 
-    private List<IDrawable> _drawableObjects = new ();
+    private List<GameObject> _gameObjects = new ();
 
     public void Start()
     {
@@ -41,13 +42,19 @@ public class Game
             Time.UpdateTimer();
             Window.DispatchEvents();
 
-            MoveInputProcessing();
+            Input.CheckMovePaddleInput();
+            
+            UpdateGameObjects();
+
+            ownPaddle.TryMoveOwnPaddle();
             enemyPaddle.TryMoveAIPaddle(ball);
 
-            MoveBall();
-            CheckIfSomeoneWon();
+            ball.TryBounceFromPaddle(ownPaddle, Position.Bot);
+            ball.TryBounceFromPaddle(enemyPaddle, Position.Top);
 
-            Window.DrawScene(_drawableObjects.ToArray());
+            CheckIfSomeoneWon();
+            
+            Window.DrawScene(_gameObjects.ToArray());
             
         }
 
@@ -56,33 +63,35 @@ public class Game
 
     private void Stop()
     {
-        _drawableObjects = new ();
+        _gameObjects = new ();
         Window.Close();
         Start();
     }
 
-    private void MoveBall()
+    private void UpdateGameObjects()
     {
-        ball.Move();
-        ball.TryBounceFromPaddle(ownPaddle, Position.Bot);
-        ball.TryBounceFromPaddle(enemyPaddle, Position.Top);
+        foreach (GameObject gameObject in _gameObjects)
+        {
+            gameObject.Update();
+        }
     }
+
     private void SetPaddles()
     {
         ownPaddle = new Paddle(Window.renderWindow.Size);
-        _drawableObjects.Add(ownPaddle);
+        _gameObjects.Add(ownPaddle);
         
         enemyPaddle = new Paddle(Window.renderWindow.Size);
-        _drawableObjects.Add(enemyPaddle);
+        _gameObjects.Add(enemyPaddle);
     }
     private void SetBall()
     {
         ball = new Ball(Window.renderWindow.Size);
-        _drawableObjects.Add(ball);
+        _gameObjects.Add(ball);
     } 
     private void WindowClosed(object? sender, EventArgs e) => _isPlaying = false;
     
-    private void MoveInputProcessing()
+    /*private void MoveInputProcessing()
     {
         if (Keyboard.IsKeyPressed(Keyboard.Key.Left))
         {
@@ -92,7 +101,7 @@ public class Game
         {
             ownPaddle.MovePaddle(Direction.Right);
         }
-    }
+    }*/
     private void CheckIfSomeoneWon()
     {
         Vector2f ballPosition = ball.GetBallPosition();

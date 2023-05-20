@@ -1,7 +1,7 @@
 using SFML.Graphics;
 using SFML.System;
 
-public class Ball : IDrawable
+public class Ball : GameObject
 {
 
     private CircleShape _shape;
@@ -14,21 +14,29 @@ public class Ball : IDrawable
     {
         _windowSize = windowSize;
         
-        SetShapeSettings();
-        _ballSpeed = 0.3f;
-
-        SetRandomBallDirection();
-
+        Start();
     }
 
-    private void SetShapeSettings()
+    public override void Start()
     {
+        base.Start();
         _shape = new CircleShape(10);
         _shape.FillColor = Color.Green;
         _shape.Origin = new Vector2f(_shape.Radius, _shape.Radius);
+        
+        _ballSpeed = 0.3f;
+
+        transformable = _shape;
+        
+        SetRandomBallDirection();
     }
 
-    public void Draw() => Window.renderWindow.Draw(_shape);
+    public override void Update()
+    {
+        base.Update();
+        Move();
+    }
+
     private void SetRandomBallDirection()
     {
         int xDirection = 1;
@@ -55,7 +63,6 @@ public class Ball : IDrawable
     public float GetBallRadius() => _shape.Radius;
     public Vector2f GetBallDirection() => _ballDirection;
     public void SetBallPosition(Vector2f newPosition) => _shape.Position = newPosition;
-    public int bounces = 0;
     public void OnBounce(Direction bounceDirection)
     {
         _ballSpeed += 0.001f;
@@ -63,13 +70,9 @@ public class Ball : IDrawable
         {
             case Direction.Vertical:
                 _ballDirection.Y = -_ballDirection.Y;
-                bounces++;
-                Console.WriteLine(bounces);
                 break;
             case Direction.Horizontal:
                 _ballDirection.X = -_ballDirection.X;
-                bounces++;
-                Console.WriteLine(bounces);
                 break;
             default:
                 throw new NotImplementedException();

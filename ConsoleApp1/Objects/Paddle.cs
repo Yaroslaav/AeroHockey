@@ -1,7 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.System;
 
-public class Paddle : IDrawable 
+public class Paddle : GameObject
 {
 
     private Vector2u _windowSize;
@@ -11,19 +11,21 @@ public class Paddle : IDrawable
 
     public Paddle(Vector2u windowSize)
     {
-        this._windowSize = windowSize;
+        _windowSize = windowSize;
 
-        SetShapeSettings();
+        Start();
     }
 
-    private void SetShapeSettings()
+    public override void Start()
     {
+        base.Start();
         _shape = new RectangleShape(new Vector2f(100, 20));
         _shape.FillColor = Color.White;
         _shape.Origin = new Vector2f(_shape.Size.X / 2, _shape.Size.Y / 2);
-    }
 
-    public void Draw() => Window.renderWindow.Draw(_shape);
+        transformable = _shape;
+    }
+    
     public void MovePaddle(Direction direction)
     {
         switch (direction)

@@ -9,13 +9,14 @@ public static class Window
 
     public static RenderWindow renderWindow;
     
-    public static void DrawScene(IDrawable[] items)
+    public static void DrawScene(GameObject[] items)
     {
         Clear();
 
-        foreach (IDrawable item in items)
+        foreach (GameObject item in items)
         {
-            item.Draw();
+            if(item.transformable is Drawable)
+                renderWindow.Draw((Drawable)item.transformable);
         }
         renderWindow.Display();
     }

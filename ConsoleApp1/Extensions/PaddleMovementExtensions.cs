@@ -17,4 +17,19 @@ public static class PaddleMovementExtensions
         }
     }
 
+    public static void TryMoveOwnPaddle(this Paddle paddle)
+    {
+        switch (Input.paddleLastMoveDirection)
+        {
+            case Direction.Right:
+                paddle.MovePaddle(Direction.Right);
+                Input.paddleLastMoveDirection = Direction.None;
+                break;
+            case Direction.Left:
+                paddle.MovePaddle(Direction.Left);
+                Input.paddleLastMoveDirection = Direction.None;
+                break;
+        }
+    }
+
 }
