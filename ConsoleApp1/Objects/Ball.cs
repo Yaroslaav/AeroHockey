@@ -3,7 +3,6 @@ using SFML.System;
 
 public class Ball : IDrawable
 {
-    private Random rand = new Random();
 
     private CircleShape _shape;
     private float _ballSpeed;
@@ -13,10 +12,10 @@ public class Ball : IDrawable
 
     public Ball(Vector2u windowSize) 
     {
-        this._windowSize = windowSize;
+        _windowSize = windowSize;
         
         SetShapeSettings();
-        _ballSpeed = 0.05f;
+        _ballSpeed = 0.3f;
 
         SetRandomBallDirection();
 
@@ -29,17 +28,17 @@ public class Ball : IDrawable
         _shape.Origin = new Vector2f(_shape.Radius, _shape.Radius);
     }
 
-    public Shape GetDrawableObject() => _shape;
+    public void Draw() => Window.renderWindow.Draw(_shape);
     private void SetRandomBallDirection()
     {
         int xDirection = 1;
         int yDirection = 1;
-
-        if (Probability(50))
+        
+        if (Probability.Next(50))
         {
             xDirection = -xDirection;
         }
-        if (Probability(50))
+        if (Probability.Next(50))
         {
             yDirection = -yDirection;
         }
@@ -48,25 +47,15 @@ public class Ball : IDrawable
     }
     public void Move()
     {
-        _shape.Position += _ballDirection * _ballSpeed;
+        _shape.Position += _ballDirection * _ballSpeed * Time.deltaTime;
         TryBounceFromWindowBorders();
     }
 
-    private bool Probability(int procent)
-    {
-        if (procent < 0)
-        {
-            procent = 0;
-        }
-        else if (procent > 100)
-        {
-            procent = 100;
-        }
-        return rand.Next(1, 101) <= procent;
-    }
     public Vector2f GetBallPosition() => _shape.Position;
     public float GetBallRadius() => _shape.Radius;
+    public Vector2f GetBallDirection() => _ballDirection;
     public void SetBallPosition(Vector2f newPosition) => _shape.Position = newPosition;
+    public int bounces = 0;
     public void OnBounce(Direction bounceDirection)
     {
         _ballSpeed += 0.001f;
@@ -74,21 +63,28 @@ public class Ball : IDrawable
         {
             case Direction.Vertical:
                 _ballDirection.Y = -_ballDirection.Y;
+                bounces++;
+                Console.WriteLine(bounces);
                 break;
             case Direction.Horizontal:
                 _ballDirection.X = -_ballDirection.X;
+                bounces++;
+                Console.WriteLine(bounces);
                 break;
             default:
                 throw new NotImplementedException();
         }
 
     }
-    private void TryBounceFromWindowBorders()
-    {
-        if (_shape.Position.X < _shape.Radius || _shape.Position.X + _shape.Radius > _windowSize.X)
+        private void TryBounceFromWindowBorders()
         {
-            OnBounce(Direction.Horizontal);
+            if (_shape.Position.X < _shape.Radius && _ballDirection.X < 0)
+            {
+                OnBounce(Direction.Horizontal);
+            }else if (_shape.Position.X + _shape.Radius > _windowSize.X && _ballDirection.X > 0)
+            {
+                OnBounce(Direction.Horizontal);
+            }
         }
-    }
 
 }

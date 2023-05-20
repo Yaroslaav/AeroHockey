@@ -1,6 +1,5 @@
 ﻿using SFML.System;
 using SFML.Window;
-using Window = AeroHockey.Window;
 
 public enum Direction 
 {
@@ -31,19 +30,21 @@ public class Game
         SetObjectsStartPosition();
         
         _isPlaying = true;
+        
+        Time.Start();
         GameLoop();
     }
     private void GameLoop()
     {
         while(_isPlaying)
         {
+            Time.UpdateTimer();
             Window.DispatchEvents();
 
             MoveInputProcessing();
-            TryMoveOpponentPaddle();
+            enemyPaddle.TryMoveAIPaddle(ball);
 
-            ball.Move();
-            TryBounceFromPaddle();
+            MoveBall();
             CheckIfSomeoneWon();
 
             Window.DrawScene(_drawableObjects.ToArray());
@@ -58,6 +59,13 @@ public class Game
         _drawableObjects = new ();
         Window.Close();
         Start();
+    }
+
+    private void MoveBall()
+    {
+        ball.Move();
+        ball.TryBounceFromPaddle(ownPaddle, Position.Bot);
+        ball.TryBounceFromPaddle(enemyPaddle, Position.Top);
     }
     private void SetPaddles()
     {
@@ -85,20 +93,6 @@ public class Game
             ownPaddle.MovePaddle(Direction.Right);
         }
     }
-    private void TryMoveOpponentPaddle()
-    {
-        Vector2f ballPosition = ball.GetBallPosition();
-        Vector2f paddlePosition = enemyPaddle.GetPosition();
-
-        if (ballPosition.X < paddlePosition.X)
-        {
-            enemyPaddle.MovePaddle(Direction.Left);
-        }
-        else if (ballPosition.X > paddlePosition.X)
-        {
-            enemyPaddle.MovePaddle(Direction.Right);
-        }
-    }
     private void CheckIfSomeoneWon()
     {
         Vector2f ballPosition = ball.GetBallPosition();
@@ -119,31 +113,14 @@ public class Game
         SetStartPaddlesPosition();
         SetStartBallPosition();
     }
-    private void TryBounceFromPaddle()
+    private void SetStartBallPosition()
     {
-        Vector2f ballPosition = ball.GetBallPosition();
-        float ballRadius = ball.GetBallRadius();
-
-        if(ownPaddle.IfSmthHit(new Vector2f(ballPosition.X + ballRadius, ballPosition.Y + ballRadius)))
-        {
-            ball.OnBounce(Direction.Vertical);
-        }
-        if (enemyPaddle.IfSmthHit(new Vector2f(ballPosition.X - ballRadius, ballPosition.Y - ballRadius)))
-        {
-            ball.OnBounce(Direction.Vertical);
-        }
+        ball.SetBallPosition(new Vector2f(Window.GetWindowCenter().X, Window.GetWindowCenter().Y));
     }
-    public void SetStartBallPosition()
+    private void SetStartPaddlesPosition()
     {
-        float ballRadius = ball.GetBallRadius();
-        ball.SetBallPosition(new Vector2f(Window.WindowWidth / 2 - ballRadius, Window.WindowHeight / 2 - ballRadius));
-    }
-    public void SetStartPaddlesPosition()
-    {
-        Vector2f paddleSize = ownPaddle.GetSize();
-        ownPaddle.SetPosition(new Vector2f(Window.WindowWidth / 2 - paddleSize.X / 2, Window.WindowHeight - paddleSize.Y));
+        ownPaddle.SetPosition(new Vector2f(Window.GetWindowCenter().X, Window.WindowHeight - ownPaddle.GetSize().Y));
 
-        paddleSize = enemyPaddle.GetSize();
-        enemyPaddle.SetPosition(new Vector2f(Window.WindowWidth / 2 - paddleSize.X / 2, paddleSize.Y));
+        enemyPaddle.SetPosition(new Vector2f(Window.GetWindowCenter().X, enemyPaddle.GetSize().Y));
     }
 }

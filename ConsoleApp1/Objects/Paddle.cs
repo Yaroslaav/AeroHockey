@@ -7,7 +7,7 @@ public class Paddle : IDrawable
     private Vector2u _windowSize;
 
     private RectangleShape _shape;
-    private float _paddleSpeed = 0.1f;
+    private float _paddleSpeed = 0.5f;
 
     public Paddle(Vector2u windowSize)
     {
@@ -23,7 +23,7 @@ public class Paddle : IDrawable
         _shape.Origin = new Vector2f(_shape.Size.X / 2, _shape.Size.Y / 2);
     }
 
-    public Shape GetDrawableObject() => _shape;
+    public void Draw() => Window.renderWindow.Draw(_shape);
     public void MovePaddle(Direction direction)
     {
         switch (direction)
@@ -31,13 +31,13 @@ public class Paddle : IDrawable
             case Direction.Left:
                 if (_shape.Position.X - _shape.Size.X / 2 > 0)
                 {
-                    _shape.Position -= new Vector2f(_paddleSpeed, 0);
+                    _shape.Position -= new Vector2f(_paddleSpeed, 0) * Time.deltaTime;
                 }
                 break;
             case Direction.Right:
                 if (_shape.Position.X + _shape.Size.X / 2 < _windowSize.X)
                 {
-                    _shape.Position += new Vector2f(_paddleSpeed, 0);
+                    _shape.Position += new Vector2f(_paddleSpeed, 0) * Time.deltaTime;
                 }
                 break;
         }

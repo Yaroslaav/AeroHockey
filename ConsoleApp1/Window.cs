@@ -1,7 +1,6 @@
 using SFML.Graphics;
+using SFML.System;
 using SFML.Window;
-
-namespace AeroHockey;
 
 public static class Window
 {
@@ -16,13 +15,14 @@ public static class Window
 
         foreach (IDrawable item in items)
         {
-            renderWindow.Draw(item.GetDrawableObject());
+            item.Draw();
         }
         renderWindow.Display();
     }
     public static void SetWindow()
     {
         renderWindow = new RenderWindow(new VideoMode(WindowWidth, WindowHeight), "Aero Hockey");
+        renderWindow.SetFramerateLimit(600);
         Clear();
     }
 
@@ -33,4 +33,5 @@ public static class Window
         Clear();
         renderWindow.Close();
     }
+    public static Vector2u GetWindowCenter() => new (WindowWidth / 2, WindowHeight / 2);
 }
